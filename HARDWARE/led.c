@@ -1,11 +1,13 @@
 #include "function_declare.h"
 #include "led.h"
 /// Function definitions
-/**
-*@function LED_Init  
+
+
+/****************************************************************
+*@function LED_GPIO_Init  
 *@author William Yu
 *@brief LED信号灯指示
-*/
+****************************************************************/
 //初始化PF9和PF10为输出口.并使能这两个口的时钟		    
 //LED IO初始化
 void LED_GPIO_Init(void)
@@ -26,7 +28,11 @@ void LED_GPIO_Init(void)
 
 }
 
-
+/****************************************************************
+*@function LED_Init  
+*@author William Yu
+*@brief LED信号灯指示
+****************************************************************/
 void LED_Init(void)
 {
 	LED_GPIO_Init();
