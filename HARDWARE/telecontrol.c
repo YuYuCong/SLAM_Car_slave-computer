@@ -266,6 +266,16 @@ void TIM5_IRQHandler(void)
 
 
 
+void telecontrol_Init(void)
+{
+	TIM5_Cap_Init(0xffff,72-1); //以1Mhz的频率计数
+	printf("Mecanum OK!\r\n");
+}
+
+
+/*************************   初始化结束  *************************/
+/*************************   初始化结束  *************************/
+
 
 void telecontrol_Debug(void)
 {
@@ -278,21 +288,6 @@ void telecontrol_Debug(void)
 		delay_ms(10);
 		printf("Channel 4 : %d us\r\n",Channel_4);
 }
-
-	
-
-void telecontrol_Init(void)
-{
-	TIM5_Cap_Init(0xffff,72-1); //以1Mhz的频率计数
-	printf("Mecanum OK!\r\n");
-}
-
-
-/*************************   初始化结束  *************************/
-/*************************   初始化结束  *************************/
-
-
-
 
 
 /*************************   (C) COPYRIGHT 2017 William Yu  ******************************

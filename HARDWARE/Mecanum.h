@@ -16,6 +16,9 @@ void Car_1_30_Direction(u16 speed);//1点半方向
 void Car_4_30_Direction(u16 speed);//4点半方向
 void Car_7_30_Direction(u16 speed);//7点半方向
 void Car_10_30_Direction(u16 speed);//10点半方向
+void Car_clockwise(u16 speed);
+void Car_anticlockwise(u16 speed);
+
 
 void car_telecontrol(int16_t duty1,int16_t duty2,int16_t duty3,int16_t duty4);
 	

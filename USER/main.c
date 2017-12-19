@@ -19,13 +19,11 @@ int main(void)
 	telecontrol_Init();
 	
 	
-	
-	
 	while(1)
 	{
+		
 		Mecanum_Debug();
 		telecontrol_Debug();
-
 
 	}
 }

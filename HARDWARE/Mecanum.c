@@ -11,7 +11,6 @@
 **********************************************************************************/
 
 #include "function_declare.h"
-//#include "Mecanum.h"
 
 /// Function definitions
 
@@ -35,8 +34,6 @@ void TIM3_GPIO_Config(void)
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;//100MHz
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//上拉
 	GPIO_Init(GPIOC, &GPIO_InitStructure);//初始化
-	
-
 }
 
 /**
@@ -54,7 +51,7 @@ static void TIM3_Mode_Config(void)
 
 	
 	/* PWM信号电平跳变值 */
-//	u16 CCR1_Val = 500;        
+//	u16 CCR1_Val = 500;
 //	u16 CCR2_Val = 375;
 //	u16 CCR3_Val = 250;
 //	u16 CCR4_Val = 125;
@@ -238,9 +235,9 @@ void Motor_leftBehind_Back(u16 pwm_leftBehind )
 *@function   
 *@author William Yu
 *@brief 
-*/
+**********************************************************************************************/
 ///车的移动分控代码
-void Car_Stop()//
+void Car_Stop()
 {
 	GPIO_ResetBits(GPIOF,GPIO_Pin_0 );
 	GPIO_ResetBits(GPIOF,GPIO_Pin_1 );
@@ -261,25 +258,25 @@ void Car_Stop()//
 void Car_Go(u16 speed)//12点钟方向 = 前+前+前+前 （左前+右前+左后+右后）
 {
 	Motor_leftFront_Go(speed);
-	Motor_leftBehind_Go(speed);
 	Motor_rightFront_Go(speed);
 	Motor_rightBehind_Go(speed);
+	Motor_leftBehind_Go(speed);
 }
 void Car_Back(u16 speed)//6点钟方向 = 后+后+后+后
 {
 	Motor_leftFront_Back(speed);
-	Motor_leftBehind_Back(speed);
 	Motor_rightFront_Back(speed);
 	Motor_rightBehind_Back(speed);
+	Motor_leftBehind_Back(speed);
 }
-void Car_Lfet(u16 speed)//9点钟方向 = +++//？？？？？？？？？？？？？？
+void Car_Lfet(u16 speed)//9点钟方向 = 后前后前
 {
 	Motor_leftFront_Go(speed);
 	Motor_leftBehind_Back(speed);
 	Motor_rightFront_Back(speed);
 	Motor_rightBehind_Go(speed);
 }
-void Car_Right(u16 speed)//3点钟方向 = +++//？？？？？？？？？？？？？？
+void Car_Right(u16 speed)//3点钟方向 = 前后前后
 {
 	Motor_leftFront_Back(speed);
 	Motor_leftBehind_Go(speed);
@@ -287,28 +284,44 @@ void Car_Right(u16 speed)//3点钟方向 = +++//？？？？？？？？？？？？？？
 	Motor_rightBehind_Back(speed);
 }
 ///斜向移动
-void Car_1_30_Direction(u16 speed)//1点半方向
+void Car_1_30_Direction(u16 speed)//1点半方向 = 前X前X
+{
+	Motor_leftFront_Go(speed);
+	//Motor_rightFront_Go(speed);
+	Motor_rightBehind_Go(speed);
+	//Motor_leftBehind_Go(speed);
+}
+void Car_4_30_Direction(u16 speed)//4点半方向 = X后X后
+{
+	//Motor_leftFront_Back(speed);
+	Motor_rightFront_Back(speed);
+	//Motor_rightBehind_Back(speed);
+	Motor_leftBehind_Back(speed);
+}
+void Car_7_30_Direction(u16 speed)//7点半方向 = 后X后X
+{
+	Motor_leftFront_Back(speed);
+	//Motor_rightFront_Back(speed);
+	Motor_rightBehind_Back(speed);
+	//Motor_leftBehind_Back(speed);
+}
+void Car_10_30_Direction(u16 speed)//10点半方向 = X前X前
+{
+	//Motor_leftFront_Go(speed);
+	Motor_rightFront_Go(speed);
+	//Motor_rightBehind_Go(speed);
+	Motor_leftBehind_Go(speed);
+}
+
+///原地旋转
+void Car_clockwise(u16 speed)//顺时针方向
 {
 	Motor_leftFront_Back(speed);
 	Motor_leftBehind_Go(speed);
 	Motor_rightFront_Go(speed);
 	Motor_rightBehind_Back(speed);
 }
-void Car_4_30_Direction(u16 speed)//4点半方向
-{
-	Motor_leftFront_Back(speed);
-	Motor_leftBehind_Go(speed);
-	Motor_rightFront_Go(speed);
-	Motor_rightBehind_Back(speed);
-}
-void Car_7_30_Direction(u16 speed)//7点半方向
-{
-	Motor_leftFront_Back(speed);
-	Motor_leftBehind_Go(speed);
-	Motor_rightFront_Go(speed);
-	Motor_rightBehind_Back(speed);
-}
-void Car_10_30_Direction(u16 speed)//10点半方向
+void Car_anticlockwise(u16 speed)//逆时针方向
 {
 	Motor_leftFront_Back(speed);
 	Motor_leftBehind_Go(speed);
@@ -319,7 +332,11 @@ void Car_10_30_Direction(u16 speed)//10点半方向
 
 
 
-
+/**********************************************************************************************
+*@function  Mecanum_Debug
+*@author William Yu
+*@brief 
+**********************************************************************************************/
 
 void Mecanum_Debug(void)
 {
@@ -345,14 +362,9 @@ void Mecanum_Debug(void)
 
 
 
-/*************************   遥控指令控制  ***********************/
-/*************************   遥控指令控制  ***********************/
-
-
-
 /******************************************************************************
 函数原型：	void car_telecontrol(int16_t duty1,int16_t duty2,int16_t duty3,int16_t duty4)
-功    能：	电机驱动
+功    能：	遥控指令控制
 *******************************************************************************/ 
 
 //未完待续
