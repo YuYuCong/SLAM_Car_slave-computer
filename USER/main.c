@@ -21,7 +21,6 @@ int main(void)
 	
 	while(1)
 	{
-		
 		Mecanum_Debug();
 		telecontrol_Debug();
 
