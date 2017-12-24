@@ -7,7 +7,7 @@
  *     	    |  PC08: (TIM3_CH3)  pwm_rightBehind   F4-F5   |
  *          |  PC09: (TIM3_CH4)  pwm_leftBehind    F6-F7   |
  *          -------------------------------------------------
- * 作者    ：William Yu
+ * 作者    ：William Yu0
 **********************************************************************************/
 
 #include "function_declare.h"
@@ -37,7 +37,6 @@ void TIM3_GPIO_Config(void)
 	GPIO_PinAFConfig(GPIOC,GPIO_PinSource7,GPIO_AF_TIM3); //GPIO复用为定时器
 	GPIO_PinAFConfig(GPIOC,GPIO_PinSource8,GPIO_AF_TIM3); //GPIO复用为定时器
 	GPIO_PinAFConfig(GPIOC,GPIO_PinSource9,GPIO_AF_TIM3); //GPIO复用为定时器
-
 }
 
 /**
@@ -80,9 +79,7 @@ void TIM3_Mode_Config(void)
 	TIM_TimeBaseStructure.TIM_Prescaler = 71;    //设置预分频：不预分频，即为72MHz /72 =1MHz
 	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1 ;//设置时钟分频系数：不分频
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //向上计数模式
-	//???要加下面这一句？？？
-	TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;   //重复寄存器，用于自动更新pwm占空比 
-    
+
 	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
  
     /* PWM1 Mode configuration: Channel1 */
@@ -115,7 +112,7 @@ void TIM3_Mode_Config(void)
 
     /* TIM3 enable counter */
     TIM_Cmd(TIM3, ENABLE);                   //使能定时器3
- 
+
 }
 
 /**
