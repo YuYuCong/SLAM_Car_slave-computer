@@ -22,7 +22,9 @@ int main(void)
 	while(1)
 	{
 		Mecanum_Debug();
-		telecontrol_Debug();
+		//telecontrol_Debug();
+
+		//TIM_SetCompare1(TIM3,500);	//修改比较值，修改占空比
 
 	}
 }

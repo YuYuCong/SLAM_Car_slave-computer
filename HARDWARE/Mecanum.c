@@ -15,7 +15,7 @@
 /// Function definitions
 
 /**
-*@function TIM3_GPIO_Config  
+*@function TIM3_GPIO_Config
 *@author William Yu
 *@brief 麦轮驱动PWM信号端口配置
 */
@@ -25,8 +25,6 @@ void TIM3_GPIO_Config(void)
 	///使能端口时钟
   	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
 	
-	GPIO_PinAFConfig(GPIOC,GPIO_PinSource6|GPIO_PinSource7|GPIO_PinSource8|GPIO_PinSource9,GPIO_AF_TIM3); //GPIO复用为定时器
-
 	///初始化配置
     GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_6 | GPIO_Pin_7|GPIO_Pin_8 | GPIO_Pin_9;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF; //复用功能
@@ -34,14 +32,20 @@ void TIM3_GPIO_Config(void)
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;//100MHz
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//上拉
 	GPIO_Init(GPIOC, &GPIO_InitStructure);//初始化
+
+	GPIO_PinAFConfig(GPIOC,GPIO_PinSource6,GPIO_AF_TIM3); //GPIO复用为定时器
+	GPIO_PinAFConfig(GPIOC,GPIO_PinSource7,GPIO_AF_TIM3); //GPIO复用为定时器
+	GPIO_PinAFConfig(GPIOC,GPIO_PinSource8,GPIO_AF_TIM3); //GPIO复用为定时器
+	GPIO_PinAFConfig(GPIOC,GPIO_PinSource9,GPIO_AF_TIM3); //GPIO复用为定时器
+
 }
 
 /**
-*@function TIM3_Mode_Config  
+*@function TIM3_Mode_Config
 *@author William Yu
 *@brief 麦轮驱动PWM信号端口配置
 */
-static void TIM3_Mode_Config(void)
+void TIM3_Mode_Config(void)
 {
  
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
@@ -73,40 +77,42 @@ static void TIM3_Mode_Config(void)
  
 	/* Time base configuration */
 	TIM_TimeBaseStructure.TIM_Period = 999;       //当定时器从0计数到999，即为1000次，为一个定时周期
-	TIM_TimeBaseStructure.TIM_Prescaler = 0;    //设置预分频：不预分频，即为72MHz
+	TIM_TimeBaseStructure.TIM_Prescaler = 71;    //设置预分频：不预分频，即为72MHz /72 =1MHz
 	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1 ;//设置时钟分频系数：不分频
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //向上计数模式
-	 
-    TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+	//???要加下面这一句？？？
+	TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;   //重复寄存器，用于自动更新pwm占空比 
+    
+	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
  
     /* PWM1 Mode configuration: Channel1 */
     TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;    //配置为PWM模式1
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
     TIM_OCInitStructure.TIM_Pulse = CCR1_Val;   //设置跳变值，当计数器计数到这个值时，电平发生跳变
     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;  //当定时器计数值小于CCR1_Val时为高电平
-    TIM_OC1Init(TIM3, &TIM_OCInitStructure); //使能通道1
     TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);//使能TIM在CCR1上的预装载寄存器
- 
+	TIM_OC1Init(TIM3, &TIM_OCInitStructure); //使能通道1
+   
     /* PWM1 Mode configuration: Channel2 */
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
     TIM_OCInitStructure.TIM_Pulse = CCR2_Val;  //设置通道2的电平跳变值，输出另外一个占空比的PWM
-    TIM_OC2Init(TIM3, &TIM_OCInitStructure);  //使能通道2
-    TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);
- 
+	TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);
+	TIM_OC2Init(TIM3, &TIM_OCInitStructure);  //使能通道2
+    
     /* PWM1 Mode configuration: Channel3 */
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
     TIM_OCInitStructure.TIM_Pulse = CCR3_Val;//设置通道3的电平跳变值，输出另外一个占空比的PWM
-    TIM_OC3Init(TIM3, &TIM_OCInitStructure); //使能通道3
     TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);
- 
+	TIM_OC3Init(TIM3, &TIM_OCInitStructure); //使能通道3
+  
     /* PWM1 Mode configuration: Channel4 */
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
     TIM_OCInitStructure.TIM_Pulse = CCR4_Val;//设置通道4的电平跳变值，输出另外一个占空比的PWM
-    TIM_OC4Init(TIM3, &TIM_OCInitStructure);//使能通道4
     TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);
- 
+	TIM_OC4Init(TIM3, &TIM_OCInitStructure);//使能通道4
+	
     TIM_ARRPreloadConfig(TIM3, ENABLE); // 使能TIM3重载寄存器ARR
- 
+
     /* TIM3 enable counter */
     TIM_Cmd(TIM3, ENABLE);                   //使能定时器3
  
@@ -181,7 +187,7 @@ void Motor_leftFront_Go(u16 pwm_leftFront )
 	GPIO_ResetBits(GPIOF,GPIO_Pin_0 );
 	GPIO_SetBits(GPIOF,GPIO_Pin_1 );
 	TIM_SetCompare1(TIM3,pwm_leftFront);
-}	
+}
 void Motor_rightFront_Go(u16 pwm_rightFront)
 {	
 	GPIO_ResetBits(GPIOF,GPIO_Pin_2 );
@@ -198,7 +204,7 @@ void Motor_leftBehind_Go(u16 pwm_leftBehind )
 {	
 	GPIO_ResetBits(GPIOF,GPIO_Pin_7 );
 	GPIO_SetBits(GPIOF,GPIO_Pin_6 );
-	TIM_SetCompare4(TIM3,pwm_leftBehind);	
+	TIM_SetCompare4(TIM3,pwm_leftBehind);
 }
 
 
@@ -338,27 +344,27 @@ void Car_anticlockwise(u16 speed)//逆时针方向
 
 void Mecanum_Debug(void)
 {
-		Car_Go(1000);
-			delay_ms(10000);
-		Car_Back(800);
-			delay_ms(2000);
-		Car_Lfet(800);
-			delay_ms(10000);
-		Car_Right(800);
-			delay_ms(10000);
-		Car_10_30_Direction(700);
-			delay_ms(20000);
-		Car_4_30_Direction(700);
-			delay_ms(20000);
-		Car_1_30_Direction(700);
-			delay_ms(20000);
-		Car_7_30_Direction(700);
-			delay_ms(20000);
+		Car_Go(800);
+//			delay_ms(10000);
+//		Car_Back(800);
+//			delay_ms(2000);
+//		Car_Lfet(800);
+//			delay_ms(10000);
+//		Car_Right(800);
+//			delay_ms(10000);
+//		Car_10_30_Direction(700);
+//			delay_ms(20000);
+//		Car_4_30_Direction(700);
+//			delay_ms(20000);
+//		Car_1_30_Direction(700);
+//			delay_ms(20000);
+//		Car_7_30_Direction(700);
+//			delay_ms(20000);
 }
 
 
 
-
+//pwm满值为1000
 
 /******************************************************************************
 函数原型：	void car_telecontrol(int16_t duty1,int16_t duty2,int16_t duty3,int16_t duty4)
